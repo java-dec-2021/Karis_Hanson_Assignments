@@ -1,6 +1,7 @@
-package com.karis.dojosninjas.models;
+package com.karis.dojooverflow.models;
 
 import java.util.Date;
+
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,58 +10,45 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+
 import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-@Entity 
-@Table(name="ninjas")
-public class Ninja {
-
+@Entity
+@Table(name="answers")
+public class Answer {
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id; 
 	
-	@Size(min=2, max=20, message= "Name should be between 2-20 characters") 
-	private String firstName; 
-	
-	@Size(min=2, max=20, message= "Name should be between 2-20 characters") 
-	private String lastName; 
-
-	@NotNull (message= "Need to include an age")
-	private int age;
+	@Size(min=2, max=500, message="answer should be between 2-500 characters")
+	private String answer;
 	
 	@Column(updatable=false)
 	@DateTimeFormat(pattern="yyyy-MM-dd")
-	private Date createdAt;
-	    
+	private Date createdAt; 
+	
 	@DateTimeFormat(pattern="yyyy-MM-dd")
-	private Date updatedAt;
+	private Date updatedAt; 
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="dojo_id")
-	private Dojo dojo;
-	    
-	public Ninja() {
+	@JoinColumn(name="question_id")
+	private Question question;
+	
+	public Answer() {
 		
 	}
-	
 
-
-	public Ninja( String firstName, String lastName, int age, Dojo dojo) {
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.age = age;
-		this.dojo = dojo;
+	public Answer(String answer, Question question) {
+		this.answer = answer;
+		this.question = question;
 	}
 
-
-	
 	public Long getId() {
 		return id;
 	}
@@ -69,49 +57,36 @@ public class Ninja {
 		this.id = id;
 	}
 
-	public String getFirstName() {
-		return firstName;
+	public String getAnswer() {
+		return answer;
 	}
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public int getAge() {
-		return age;
-	}
-
-	public void setAge(int age) {
-		this.age = age;
-	}
-
-	public Dojo getDojo() {
-		return dojo;
-	}
-
-	public void setDojo(Dojo dojo) {
-		this.dojo = dojo;
+	public void setAnswer(String answer) {
+		this.answer = answer;
 	}
 
 	public Date getCreatedAt() {
 		return createdAt;
 	}
+
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 	}
+
 	public Date getUpdatedAt() {
 		return updatedAt;
 	}
+
 	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+
+	public Question getQuestion() {
+		return question;
+	}
+
+	public void setQuestion(Question question) {
+		this.question = question;
 	}
 	@PrePersist
     protected void onCreate(){ //when object is created save the Date that the object is created at
@@ -121,4 +96,6 @@ public class Ninja {
     protected void onUpdate(){ //when object is updated save the Date that the object is updated at
         this.updatedAt = new Date();
     }
+
+	
 }
