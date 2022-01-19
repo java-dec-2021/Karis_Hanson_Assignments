@@ -77,6 +77,7 @@ public class HomeController {
 	
 	@RequestMapping(value="/dojos/{id}", method=RequestMethod.DELETE)
 	public String destroy(@PathVariable("id") Long id) {
+		System.out.println(id);
 		dojoService.deleteDojo(id);
 		return "redirect:/dojos";
 	}
