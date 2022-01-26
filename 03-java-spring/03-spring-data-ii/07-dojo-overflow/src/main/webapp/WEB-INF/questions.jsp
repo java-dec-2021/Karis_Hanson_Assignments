@@ -24,7 +24,7 @@
 				<td><a href="/questions/${question.id}">${question.question}</a></td>
 				<td>
 					<c:forEach items="${questions.tags} var=tag">
-						${question.tags} +", "
+						${question.tags}
 					</c:forEach>
 				</td>
 			</tr>
