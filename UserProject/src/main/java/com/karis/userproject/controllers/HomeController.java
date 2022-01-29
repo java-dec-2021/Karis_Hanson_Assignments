@@ -39,7 +39,7 @@ public class HomeController {
 	@PostMapping("/registration")
 	public String registerUser(@Valid @ModelAttribute("user") User user, BindingResult results,
 			HttpSession session) {
-		userValidator.validate(user,results);
+			userValidator.validate(user,results);
 		
 		if(results.hasErrors()) {
 			return "index.jsp";
@@ -121,29 +121,45 @@ public class HomeController {
 	@GetMapping("/projects/{id}")
 	public String getProject(@PathVariable("id") Long projectId, Model model, HttpSession session) {
 		if(session.getAttribute("userId")!=null) {
-		Project project=projectService.getOneProject(projectId);
-		model.addAttribute("project", project);
-		Long userId =(Long)session.getAttribute("userId");
-		model.addAttribute("loggedInUser", userId);
-		return "project.jsp";
+			Project project=projectService.getOneProject(projectId);
+			model.addAttribute("project", project);
+			Long userId =(Long)session.getAttribute("userId");
+			model.addAttribute("loggedInUser", userId);
+			return "project.jsp";
 		}else {
-			return"redirect:/";
+			return "redirect:/";
 		}
 	}
 	
 	//Delete Project
 	@GetMapping("projects/delete/{id}")
-	public String deleteProject(@PathVariable("id") Long projectId) {
-		projectService.deleteProject(projectId);
-		return "redirect:/dashboard";
+	public String deleteProject(@PathVariable("id") Long projectId, HttpSession session) {
+		Project project = projectService.getOneProject(projectId);
+		Long userId = project.getUser().getId();
+		Long sessionId =(Long)session.getAttribute("userId");
+		
+		if(userId.equals(sessionId)) {
+			projectService.deleteProject(projectId);
+			return "redirect:/dashboard";
+		}else {
+			return "redirect:/";
+		}
 	}
 	
 	//Edit-page
 	@GetMapping("/projects/edit/{id}")
-	public String editProject(@PathVariable("id") Long projectId, @ModelAttribute("editedProject") Project project, Model model) {
+	public String editProject(@PathVariable("id") Long projectId, @ModelAttribute("editedProject") Project project, Model model, HttpSession session) {
 		Project editProject = projectService.getOneProject(projectId);
-		model.addAttribute("editProject", editProject);
-		return "edit.jsp";
+		Long userId = editProject.getUser().getId();
+		Long sessionId =(Long)session.getAttribute("userId");
+
+		if(userId.equals(sessionId)) {
+//		Project editProject = projectService.getOneProject(projectId);
+			model.addAttribute("editProject", editProject);
+			return "edit.jsp";
+		}else {
+			return "redirect:/";
+		}
 	}
 	
 	//Update Project
@@ -162,21 +178,29 @@ public class HomeController {
 	//Like Project
 	@GetMapping("/projects/like/{projectId}")
 	public String like(@PathVariable("projectId") Long projectId, HttpSession session) {
-		Long userId = (Long) session.getAttribute("userId");
-		User user = userService.findById(userId);
-		Project project = projectService.getOneProject(projectId);
-		projectService.likeProject(project, user);
-		return "redirect:/dashboard";
+		if(session.getAttribute("userId")!=null) {
+			Long userId = (Long) session.getAttribute("userId");
+			User user = userService.findById(userId);
+			Project project = projectService.getOneProject(projectId);
+			projectService.likeProject(project, user);
+			return "redirect:/dashboard";
+		}else {
+			return "redirect:/";
+		}
 	}
 	
 	//Unlike Project
 	@GetMapping("/projects/unLike/{projectId}")
 	public String unLike(@PathVariable("projectId") Long projectId, HttpSession session) {
-		Long userId = (Long) session.getAttribute("userId");
-		User user = userService.findById(userId);
-		Project project = projectService.getOneProject(projectId);
-		projectService.unLikeProject(project, user);
-		return "redirect:/dashboard";
+		if(session.getAttribute("userId")!=null) {
+			Long userId = (Long) session.getAttribute("userId");
+			User user = userService.findById(userId);
+			Project project = projectService.getOneProject(projectId);
+			projectService.unLikeProject(project, user);
+			return "redirect:/dashboard";
+		}else {
+			return "redirect:/";
+		}
 	}
 }
 

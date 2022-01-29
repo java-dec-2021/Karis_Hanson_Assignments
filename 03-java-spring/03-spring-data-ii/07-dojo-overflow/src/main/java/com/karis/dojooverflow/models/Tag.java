@@ -48,9 +48,8 @@ public class Tag {
 		
 	}
 
-	public Tag(String subject, List<Question> questions) {
+	public Tag(String subject) {
 		this.subject = subject;
-		this.questions = questions;
 	}
 	
 	

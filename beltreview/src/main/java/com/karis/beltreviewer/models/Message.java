@@ -1,9 +1,7 @@
-package com.karis.dojooverflow.models;
+package com.karis.beltreviewer.models;
 
 import java.util.Date;
-import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,102 +9,123 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Table(name="questions")
-public class Question {
+@Table(name="messages")
+public class Message {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id; 
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private Long id;
 	
-	@Size(min=2, max=200, message="question should be between 2-200 characters")
-	private String question;
+	@NotNull
+	@Size(min=2, max=500, message="Message should be between 2-500 chars")
+	private String message;
 	
 	@Column(updatable=false)
 	@DateTimeFormat(pattern="yyyy-MM-dd")
-	private Date createdAt; 
-	
+	private Date createdAt;
+	    
 	@DateTimeFormat(pattern="yyyy-MM-dd")
-	private Date updatedAt; 
+	private Date updatedAt;
 	
-	@OneToMany(mappedBy="question", cascade=CascadeType.REMOVE, fetch = FetchType.LAZY)
-	private List<Answer> answers;
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="user_id")
+	private User author;
 	
-	@ManyToMany(fetch=FetchType.LAZY)
-	@JoinTable(
-		name="tags_questions",
-		joinColumns=@JoinColumn(name="question_id"),
-		inverseJoinColumns=@JoinColumn(name="tag_id")
-		)
-	private List<Tag> tags; 
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="event_id")
+	private Event event;
 	
-	public Question() {
+	public Message() {
 		
 	}
-
-	public Question(String question, List<Tag> tags) {
-		this.question = question;
-		this.tags = tags;
+	
+	
+	public Message(String message, User author, Event event) {
+		this.message = message;
+		this.author = author;
+		this.event = event;
 	}
 
-	
+
 	public Long getId() {
 		return id;
 	}
 
+	
 	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public String getQuestion() {
-		return question;
+
+
+	public String getMessage() {
+		return message;
 	}
 
-	public void setQuestion(String question) {
-		this.question = question;
+
+
+	public void setMessage(String message) {
+		this.message = message;
 	}
+
+
 
 	public Date getCreatedAt() {
 		return createdAt;
 	}
 
+
+
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 	}
+
+
 
 	public Date getUpdatedAt() {
 		return updatedAt;
 	}
 
+
+
 	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
 	}
 
-	public List<Tag> getTags() {
-		return tags;
+
+
+	public User getAuthor() {
+		return author;
 	}
 
-	public void setTags(List<Tag> tags) {
-		this.tags = tags;
-	}
-	
 
-	public List<Answer> getAnswers() {
-		return answers;
+
+	public void setAuthor(User author) {
+		this.author = author;
 	}
 
-	public void setAnswers(List<Answer> answers) {
-		this.answers = answers;
+
+
+	public Event getEvent() {
+		return event;
 	}
+
+
+
+	public void setEvent(Event event) {
+		this.event = event;
+	}
+
+
 
 	@PrePersist
     protected void onCreate(){ //when object is created save the Date that the object is created at
